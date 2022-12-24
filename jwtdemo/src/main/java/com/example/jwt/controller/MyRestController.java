@@ -1,20 +1,24 @@
 package com.example.jwt.controller;
 
+import com.example.jwt.JwtdemoApplication;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.DatatypeConverter;
 import java.util.Date;
 
 @RestController
+@RequestMapping("/token")
 public class MyRestController {
 
+    Logger logger = LoggerFactory.getLogger(JwtdemoApplication.class);
     private static final String SECRET_KEY = "84DAF5295E5BB1DF";
 
-    @GetMapping("/gettoken")
+    @GetMapping
     public String getToken()
     {
         Date issuedTime = new Date(System.currentTimeMillis());
@@ -29,10 +33,10 @@ public class MyRestController {
         return token;
     }
 
-    @PostMapping("/verifyToken")
-    public String verifyToken(@RequestParam(value = "token", defaultValue = "NA") String token)
+    @PostMapping("/verify")
+    public String verifyToken(@RequestHeader(value = "token", defaultValue = "NA") String token)
     {
-        System.out.println("Token verification inititated");
+        logger.debug("Token verification initiated");
         String response = "INVALID TOKEN";
         try{
             Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
@@ -44,14 +48,10 @@ public class MyRestController {
                 response = "VALID TOKEN";
             }
         }
-        catch(ExpiredJwtException e)
-        {
-            System.out.println("Token was expired");
-        }
         catch(Exception e)
         {
             response = "INVALID TOKEN";
-            System.out.println("Error while parsing token");
+            logger.debug("INVALID TOKEN");
         }
         return response;
     }
