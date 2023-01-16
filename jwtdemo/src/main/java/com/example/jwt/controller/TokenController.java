@@ -13,7 +13,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/token")
-public class MyRestController {
+public class TokenController {
 
     Logger logger = LoggerFactory.getLogger(JwtdemoApplication.class);
     private static final String SECRET_KEY = "84DAF5295E5BB1DF";
